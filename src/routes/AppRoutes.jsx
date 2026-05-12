@@ -20,7 +20,7 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 
 import Login from "../pages/Login";
 
-import VendorApproval from "../Pages/admin/VendorApproval"
+import VendorApproval from "../pages/admin/VendorApproval"
 
 const AppRoutes = () => {
   return (
