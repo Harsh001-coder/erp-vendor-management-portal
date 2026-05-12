@@ -36,6 +36,8 @@ const Products = () => {
     price: "",
   });
 
+  const [editId, setEditId] = useState(null);
+
   // INPUT CHANGE
 
   const handleChange = (e) => {
@@ -47,7 +49,7 @@ const Products = () => {
 
   };
 
-  // ADD PRODUCT
+  // ADD OR UPDATE PRODUCT
 
   const handleAddProduct = () => {
 
@@ -57,16 +59,47 @@ const Products = () => {
       !formData.category ||
       !formData.price
     ) {
+
       alert("Please fill all fields");
       return;
+
     }
 
-    const newProduct = {
-      id: Date.now(),
-      ...formData,
-    };
+    // UPDATE PRODUCT
 
-    setProducts([...products, newProduct]);
+    if (editId !== null) {
+
+      const updatedProducts = products.map((product) =>
+
+        product.id === editId
+          ? {
+              ...product,
+              ...formData,
+            }
+          : product
+
+      );
+
+      setProducts(updatedProducts);
+
+      setEditId(null);
+
+    }
+
+    // ADD PRODUCT
+
+    else {
+
+      const newProduct = {
+        id: Date.now(),
+        ...formData,
+      };
+
+      setProducts([...products, newProduct]);
+
+    }
+
+    // RESET FORM
 
     setFormData({
       name: "",
@@ -74,6 +107,33 @@ const Products = () => {
       category: "",
       price: "",
     });
+
+  };
+
+  // DELETE PRODUCT
+
+  const handleDelete = (id) => {
+
+    const filteredProducts = products.filter(
+      (product) => product.id !== id
+    );
+
+    setProducts(filteredProducts);
+
+  };
+
+  // EDIT PRODUCT
+
+  const handleEdit = (product) => {
+
+    setFormData({
+      name: product.name,
+      sku: product.sku,
+      category: product.category,
+      price: product.price,
+    });
+
+    setEditId(product.id);
 
   };
 
@@ -103,7 +163,11 @@ const Products = () => {
       <div className="bg-white rounded-2xl shadow-md p-5 mb-6">
 
         <h2 className="text-2xl font-bold mb-5">
-          Add Product
+
+          {editId !== null
+            ? "Edit Product"
+            : "Add Product"}
+
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -148,9 +212,13 @@ const Products = () => {
 
         <button
           onClick={handleAddProduct}
-          className="mt-5 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all"
+          className="mt-5 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300"
         >
-          Add Product
+
+          {editId !== null
+            ? "Update Product"
+            : "Add Product"}
+
         </button>
 
       </div>
@@ -163,7 +231,7 @@ const Products = () => {
 
           <div
             key={product.id}
-            className="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition-all"
+            className="bg-white rounded-2xl shadow-md p-5 hover:shadow-xl transition-all duration-300"
           >
 
             <h2 className="text-2xl font-bold text-slate-800">
@@ -184,17 +252,26 @@ const Products = () => {
 
             <div className="mt-5 overflow-x-auto">
 
-              <Barcode value={product.sku} height={50} />
+              <Barcode
+                value={product.sku}
+                height={50}
+              />
 
             </div>
 
             <div className="flex gap-3 mt-5">
 
-              <button className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg hover:bg-yellow-200 transition-all">
+              <button
+                onClick={() => handleEdit(product)}
+                className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg hover:bg-yellow-200 transition-all duration-300"
+              >
                 Edit
               </button>
 
-              <button className="bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition-all">
+              <button
+                onClick={() => handleDelete(product.id)}
+                className="bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition-all duration-300"
+              >
                 Delete
               </button>
 
